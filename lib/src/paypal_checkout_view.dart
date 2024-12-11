@@ -105,49 +105,40 @@ class PaypalCheckoutViewState extends State<PaypalCheckoutView> {
             "Paypal Payment",
           ),
         ),
-        body: Stack(
-          children: <Widget>[
-            InAppWebView(
-              shouldOverrideUrlLoading: (controller, navigationAction) async {
-                final url = navigationAction.request.url;
+        body: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.sizeOf(context).height - 60,
+              width: double.maxFinite,
+              child: InAppWebView(
+                shouldOverrideUrlLoading: (controller, navigationAction) async {
+                  final url = navigationAction.request.url;
 
-                if (url.toString().contains(returnURL)) {
-                  exceutePayment(url, context);
-                  return NavigationActionPolicy.CANCEL;
-                }
-                if (url.toString().contains(cancelURL)) {
-                  return NavigationActionPolicy.CANCEL;
-                } else {
-                  return NavigationActionPolicy.ALLOW;
-                }
-              },
-              initialUrlRequest: URLRequest(url: WebUri(checkoutUrl!)),
-              // initialOptions: InAppWebViewGroupOptions(
-              //   crossPlatform: InAppWebViewOptions(
-              //     useShouldOverrideUrlLoading: true,
-              //   ),
-              // ),
-              onWebViewCreated: (InAppWebViewController controller) {
-                webView = controller;
-              },
-              onCloseWindow: (InAppWebViewController controller) {
-                widget.onCancel();
-              },
-              onProgressChanged:
-                  (InAppWebViewController controller, int progress) {
-                setState(() {
-                  this.progress = progress / 100;
-                });
-              },
-            ),
-            progress < 1
-                ? SizedBox(
-                    height: 3,
-                    child: LinearProgressIndicator(
-                      value: progress,
-                    ),
-                  )
-                : const SizedBox(),
+                  if (url.toString().contains(returnURL)) {
+                    exceutePayment(url, context);
+                    return NavigationActionPolicy.CANCEL;
+                  }
+                  if (url.toString().contains(cancelURL)) {
+                    return NavigationActionPolicy.CANCEL;
+                  } else {
+                    return NavigationActionPolicy.ALLOW;
+                  }
+                },
+                initialUrlRequest: URLRequest(url: WebUri(checkoutUrl!)),
+                onWebViewCreated: (InAppWebViewController controller) {
+                  webView = controller;
+                },
+                onCloseWindow: (InAppWebViewController controller) {
+                  widget.onCancel();
+                },
+                onProgressChanged:
+                    (InAppWebViewController controller, int progress) {
+                  setState(() {
+                    this.progress = progress / 100;
+                  });
+                },
+              ),
+            )
           ],
         ),
       );
